@@ -1,3 +1,4 @@
+import org.apache.commons.codec.binary.Hex
 import java.security.MessageDigest
 import java.util.*
 
@@ -8,31 +9,34 @@ fun assembleCandidateBlock(): Block {
     val includedTransactions = txIds.subList(0, numTransaction)
 
     block.transactions = buildTransactionList(includedTransactions)
-    block.hashMerkleRoot = computeMerkleRoot(block.transactions)
+    //TODO get raw transaction ... block.hashMerkleRoot = computeMerkleRoot(block.transactions)
     return block
 }
 
 
-//TODO manage odd number of Tx
-fun computeMerkleRoot(transactions: List<Transaction>): String {
-    val hash = MessageDigest.getInstance("SHA-256")
-    val txHashes = transactions.map { hash.digest(it.id.toByteArray()) }
+fun computeMerkleRoot(transactionsHashes: List<String>): String {
+    val hasher = MessageDigest.getInstance("SHA-256")
 
-    var previous: LinkedList<ByteArray> = LinkedList(txHashes)
-    val current: LinkedList<ByteArray> = LinkedList<ByteArray>()
-    while (previous.size > 1) {
-        for (i in 0 until txHashes.size step 2) {
+    var current: LinkedList<String> = LinkedList(transactionsHashes)
+    var next: LinkedList<String> = LinkedList()
+    while (current.size > 1) {
+        for (i in 0 until current.size step 2) {
             val element = when {
-                i+1 >= txHashes.size -> txHashes[i]
-                else -> hash.digest(txHashes[i] + txHashes[i + 1])
+                i+1 >= current.size -> current[i]
+                else -> {
+                    val doubleHash = hasher.digest(hasher.digest((current[i] + current[i + 1]).toByteArray()))
+                    Hex.encodeHexString(doubleHash)
+                }
             }
-            current.addLast(element)
+            next.addLast(element)
+            println("added $element")
         }
-        previous = LinkedList(current.map { it.copyOf() })
-        current.clear()
+        println("-----")
+        current = LinkedList(next.map { ""+it })
+        next = LinkedList()
     }
 
-    return String(previous.first())
+    return current.first()
 }
 
 
