@@ -1,6 +1,3 @@
-import MerklePolicy.*
-import org.apache.commons.codec.binary.Hex
-import java.security.MessageDigest
 import java.util.*
 
 fun assembleCandidateBlock(): Block {
@@ -15,33 +12,6 @@ fun assembleCandidateBlock(): Block {
 }
 
 
-fun computeMerkleRoot(transactionIds: List<String>, policy: MerklePolicy = BUBBLE_UP_ODD): String {
-    val sha256 = MessageDigest.getInstance("SHA-256")
-
-    var current: LinkedList<String> = LinkedList(transactionIds.map { doubleHash(sha256, it) })
-    var next: LinkedList<String> = LinkedList()
-    while (current.size > 1) {
-        for (i in 0 until current.size step 2) {
-            val element = when {
-                i + 1 >= current.size -> {
-                    when (policy) {
-                        BUBBLE_UP_ODD -> current[i]
-                        DUPLICATE_ODD -> doubleHash(sha256, "${current[i]}${current[i]}")
-                    }
-                }
-                else -> doubleHash(sha256, "${current[i]}${current[i + 1]}")
-            }
-            next.addLast(element)
-        }
-        current = LinkedList(next.map { "" + it })
-        next = LinkedList()
-    }
-    return current.first()
-}
-
-enum class MerklePolicy {
-    BUBBLE_UP_ODD, DUPLICATE_ODD
-}
 
 
 fun buildTransactionList(includedTransactions: List<String>): LinkedList<Transaction> {
@@ -55,7 +25,7 @@ fun buildTransactionList(includedTransactions: List<String>): LinkedList<Transac
 
 
 private fun chooseNumberOfTransactions(txIds: List<String>): Int {
-    //TODO how many TX?
+    //TODO how many TX? 511+1 conibase
     return 511
 }
 
