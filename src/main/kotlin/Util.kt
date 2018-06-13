@@ -39,7 +39,12 @@ fun execBitcoinCommand(cmd: String): String {
     return str.toString()
 }
 
-fun doubleHash(hasher: MessageDigest, input: String) = encodeHexString(hasher.digest(hasher.digest(input.toByteArray())))
+fun doubleHash(hasher: MessageDigest, input: String) : String {
+    val firstPass = hasher.digest(input.toByteArray())
+    val firstPassString = encodeHexString(firstPass)
+    val secondPass = hasher.digest(firstPassString.toByteArray())
+    return encodeHexString(secondPass)
+}
 
 
 fun Int.isEven() = this % 2 == 0

@@ -1,7 +1,7 @@
 import org.junit.Assert
 import org.junit.Test
 
-class MerkleTest {
+class MerkleRootTest {
 
     @Test
     fun `merkle computed with power-of-2 inputs`() {
