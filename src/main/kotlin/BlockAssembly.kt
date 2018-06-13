@@ -14,19 +14,16 @@ fun assembleCandidateBlock(): Block {
 }
 
 
-fun computeMerkleRoot(transactionsHashes: List<String>): String {
-    val hasher = MessageDigest.getInstance("SHA-256")
+fun computeMerkleRoot(transactionIds: List<String>): String {
+    val sha256 = MessageDigest.getInstance("SHA-256")
 
-    var current: LinkedList<String> = LinkedList(transactionsHashes)
+    var current: LinkedList<String> = LinkedList(transactionIds.map { doubleHash(sha256, it) })
     var next: LinkedList<String> = LinkedList()
     while (current.size > 1) {
         for (i in 0 until current.size step 2) {
             val element = when {
                 i+1 >= current.size -> current[i]
-                else -> {
-                    val doubleHash = hasher.digest(hasher.digest((current[i] + current[i + 1]).toByteArray()))
-                    Hex.encodeHexString(doubleHash)
-                }
+                else -> doubleHash(sha256, "${current[i]}${current[i+1]}")
             }
             next.addLast(element)
             println("added $element")
@@ -40,13 +37,11 @@ fun computeMerkleRoot(transactionsHashes: List<String>): String {
 }
 
 
-
-
 fun buildTransactionList(includedTransactions: List<String>): LinkedList<Transaction> {
     val txs = LinkedList<Transaction>()
     txs.addFirst(createCoinbaseTransacion())
     for (txId in includedTransactions) {
-        txs.addLast(createTransaction(execBitcoinCommand(GET_TRANSACTION + " " + txId)))
+        txs.addLast(createTransaction(execBitcoinCommand("$GET_TRANSACTION $txId")))
     }
     return txs
 }
