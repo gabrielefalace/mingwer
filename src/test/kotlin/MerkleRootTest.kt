@@ -1,4 +1,5 @@
 import org.junit.Assert.*
+import org.junit.Ignore
 import org.junit.Test
 
 class MerkleRootTest {
@@ -27,9 +28,22 @@ class MerkleRootTest {
         assertEquals("5343ac5720005a8f7972351aa08fcb04558eda7aea81bdb40a1d5326d33f7edd", root)
     }
 
+    //TODO fix this
+    @Ignore
+    @Test
+    fun `merkle root computed with even inputs (example from internet)`() {
+        val root = computeMerkleRoot(listOf(
+                    "1516f000de6cff5c8c63eef081ebcec2ad2fdcf7034db16045d024a90341e07d",
+                    "e20af19f85f265579ead2578859bf089c92b76a048606983ad83f27ba8f32f1a").map { littleEndian(it) },
+                false)
+        assertEquals("77c654b3d1605f78ed091cbd420c939c3feff7d57dc30c171fa45a5a3c81fd7d", root)
+    }
+
 
     @Test
     fun `merkle computed with a odd number of inputs - duplicate odds policy`() {
         //TODO implement
     }
+
+
 }

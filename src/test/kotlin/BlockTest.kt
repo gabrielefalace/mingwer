@@ -20,8 +20,7 @@ class BlockTest {
                 "b519286a1040da6ad83c783eb2872659eaf57b1bec088e614776ffe7dc8f6d01"
         ).map { littleEndian(it) }
 
-        //TODO IMPORTANT: computeMerkleRoot(txIds)
-        b.hashMerkleRoot = "2b12fcf1b09288fcaff797d71e950e71ae42b91e8bdb2304758dfcffc2b620e3"
+        b.hashMerkleRoot = "2b12fcf1b09288fcaff797d71e950e71ae42b91e8bdb2304758dfcffc2b620e3" // computeMerkleRoot(txIds, false)
 
         b.hashPrevBlock = "00000000000008a3a41b85b8b29ad444def299fee21793cd8b9e567eab02cd81"
         b.time = Instant.from(LocalDateTime.of(2011, 5, 21, 17, 26, 31).atZone(ZoneId.of("UTC"))).epochSecond

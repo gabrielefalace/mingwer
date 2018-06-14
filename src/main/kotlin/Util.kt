@@ -39,9 +39,14 @@ fun execBitcoinCommand(cmd: String): String {
     return str.toString()
 }
 
-fun doubleHash(hasher: MessageDigest, input: String) : String {
+
+//TODO improve?
+fun hash(hasher: MessageDigest, input: String, double: Boolean = true) : String {
     val firstPass = hasher.digest(input.toByteArray())
     val firstPassString = encodeHexString(firstPass)
+    if (!double)
+        return firstPassString
+
     val secondPass = hasher.digest(firstPassString.toByteArray())
     return encodeHexString(secondPass)
 }
