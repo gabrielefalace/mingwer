@@ -7,6 +7,7 @@ fun computeMerkleRoot(initialData: List<String>,
                       firstHashRound: Boolean = true,
                       applyLittleEndian: Boolean = false,
                       doubleHash: Boolean = true,
+                      applyLittleEndianEveryStage: Boolean = false,
                       oddsPolicy: MerkleOddsPolicy = BUBBLE_UP_ODD): String {
 
     val sha256 = MessageDigest.getInstance("SHA-256")
@@ -19,13 +20,17 @@ fun computeMerkleRoot(initialData: List<String>,
     var next = LinkedList<String>()
 
     while (current.size > 1) {
-        current = createNextLevel(current, oddsPolicy, sha256, doubleHash)
+        current = createNextLevel(current, oddsPolicy, sha256, doubleHash, applyLittleEndianEveryStage)
         next = LinkedList()
     }
     return current.first()
 }
 
-private fun createNextLevel(current: LinkedList<String>, oddsPolicy: MerkleOddsPolicy, hashMethod: MessageDigest, doubleHash: Boolean): LinkedList<String> {
+private fun createNextLevel(current: LinkedList<String>,
+                            oddsPolicy: MerkleOddsPolicy,
+                            hashMethod: MessageDigest,
+                            doubleHash: Boolean,
+                            applyLittleEndianEveryStage: Boolean): LinkedList<String> {
     val next = LinkedList<String>()
     for (i in 0 until current.size step 2) {
         val element = when (i) {
@@ -35,7 +40,8 @@ private fun createNextLevel(current: LinkedList<String>, oddsPolicy: MerkleOddsP
             }
             else -> hash(hashMethod, "${current[i]}${current[i + 1]}", doubleHash)
         }
-        next.addLast(element)
+        val newElement = if (applyLittleEndianEveryStage) littleEndian(element) else element
+        next.addLast(newElement)
     }
     return next
 }

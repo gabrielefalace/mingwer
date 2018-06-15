@@ -1,4 +1,3 @@
-import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.binary.Hex.*
 import java.lang.StringBuilder
 import java.security.MessageDigest
@@ -40,16 +39,14 @@ fun execBitcoinCommand(cmd: String): String {
 }
 
 
-//TODO improve?
-fun hash(hasher: MessageDigest, input: String, double: Boolean = true) : String {
+fun hash(hasher: MessageDigest, input: String, twice: Boolean = true) : String {
     val firstPass = hasher.digest(input.toByteArray())
     val firstPassString = encodeHexString(firstPass)
-    if (!double)
+    if (!twice)
         return firstPassString
-
+    hasher.reset()
     val secondPass = hasher.digest(firstPassString.toByteArray())
     return encodeHexString(secondPass)
 }
-
 
 fun Int.isEven() = this % 2 == 0
