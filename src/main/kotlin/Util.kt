@@ -40,6 +40,7 @@ fun execBitcoinCommand(cmd: String): String {
 
 
 fun hash(hasher: MessageDigest, input: String, twice: Boolean = true) : String {
+    hasher.reset()
     val firstPass = hasher.digest(input.toByteArray())
     val firstPassString = encodeHexString(firstPass)
     if (!twice)

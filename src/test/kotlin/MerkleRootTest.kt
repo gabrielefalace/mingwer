@@ -32,11 +32,10 @@ class MerkleRootTest {
     @Ignore
     @Test
     fun `merkle root computed with even inputs (example from internet)`() {
-        val root = computeMerkleRoot(listOf(
-                    "1516f000de6cff5c8c63eef081ebcec2ad2fdcf7034db16045d024a90341e07d",
-                    "e20af19f85f265579ead2578859bf089c92b76a048606983ad83f27ba8f32f1a").map { littleEndian(it) },
-                false)
-        assertEquals("77c654b3d1605f78ed091cbd420c939c3feff7d57dc30c171fa45a5a3c81fd7d", root)
+        val first = "65ac1241c1ca1f2d91b3306dda433b1ea71371f530cc00c68c1700d46f5fa984"
+        val second = "ec858f7870ea9ccb22025b0e5ea8d8a3ccbd33e200208adb49042a03df92687d"
+        val root = computeMerkleRoot(listOf(first, second), false)
+        assertEquals("a48025bde298b368ed0924d8f00dbf8a7e38933e7e0e684f61741d3db8908f73", littleEndian(root))
     }
 
 
